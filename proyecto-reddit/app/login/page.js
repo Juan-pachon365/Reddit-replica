@@ -1,0 +1,129 @@
+'use client'
+
+import { useState } from 'react'
+import { supabase } from '../../lib/supabaseClient'
+import { useRouter } from 'next/navigation'
+
+export default function Login() {
+  const router = useRouter()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(false)
+
+  const handleLogin = async (e) => {
+    e.preventDefault()
+    setLoading(true)
+    setError(null)
+
+    const { error: authError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
+
+    if (authError) {
+      setError(authError.message)
+      setLoading(false)
+      return
+    }
+
+    router.push('/dashboard')
+  }
+
+  return (
+    <div style={styles.container}>
+      <div style={styles.card}>
+        <img 
+  src="/reddit-logo.png" 
+  alt="Reddit" 
+  style={styles.logo}
+/>
+        <h2 style={styles.title}>Iniciar sesión</h2>
+
+        <form onSubmit={handleLogin} style={styles.form}>
+          <input
+            placeholder="Correo electrónico"
+            type="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            style={styles.input}
+            required
+          />
+          <input
+            placeholder="Contraseña"
+            type="password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            style={styles.input}
+            required
+          />
+
+          {error && <p style={styles.error}>{error}</p>}
+
+          <button type="submit" style={styles.button} disabled={loading}>
+            {loading ? 'Entrando...' : 'Iniciar sesión'}
+          </button>
+        </form>
+
+        <p style={styles.link}>
+          ¿No tienes cuenta?{' '}
+          <a href="/register" style={styles.anchor}>Regístrate</a>
+        </p>
+      </div>
+    </div>
+  )
+}
+
+const styles = {
+  container: {
+    minHeight: '100vh',
+    background: '#DAE0E6',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontFamily: 'Arial, sans-serif'
+  },
+  card: {
+    background: 'white',
+    padding: '32px',
+    borderRadius: '8px',
+    width: '100%',
+    maxWidth: '400px',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+  },
+ logo: {
+  width: '80px',
+  height: '80px',
+  display: 'block',
+  margin: '0 auto 16px auto'
+},
+  dot: { color: '#1c1c1c' },
+  title: {
+    textAlign: 'center',
+    fontSize: '18px',
+    marginBottom: '24px',
+    color: '#1c1c1c'
+  },
+  form: { display: 'flex', flexDirection: 'column', gap: '12px' },
+  input: {
+    padding: '10px 12px',
+    borderRadius: '4px',
+    border: '1px solid #EDEFF1',
+    fontSize: '14px',
+    background: '#F6F7F8'
+  },
+  button: {
+    padding: '10px',
+    background: '#FF4500',
+    color: 'white',
+    border: 'none',
+    borderRadius: '20px',
+    fontSize: '14px',
+    fontWeight: 'bold',
+    cursor: 'pointer',
+    marginTop: '8px'
+  },
+  error: { color: 'red', fontSize: '13px', textAlign: 'center' },
+  link: { textAlign: 'center', marginTop: '16px', fontSize: '13px' },
+  anchor: { color: '#FF4500', fontWeight: 'bold', textDecoration: 'none' }
+}
