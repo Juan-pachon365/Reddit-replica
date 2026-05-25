@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { supabase } from '../../lib/supabaseClient'
+import { supabase } from '@/lib/supabaseClient'
 import { useRouter } from 'next/navigation'
 
 export default function Login() {
@@ -27,17 +27,13 @@ export default function Login() {
       return
     }
 
-    router.push('/dashboard')
+    router.push('/')  // ← Redirige al MVP
   }
 
   return (
     <div style={styles.container}>
       <div style={styles.card}>
-        <img 
-  src="/reddit-logo.png" 
-  alt="Reddit" 
-  style={styles.logo}
-/>
+        <h1 style={styles.logoText}>reddit<span style={styles.dot}>clone</span></h1>
         <h2 style={styles.title}>Iniciar sesión</h2>
 
         <form onSubmit={handleLogin} style={styles.form}>
@@ -91,12 +87,12 @@ const styles = {
     maxWidth: '400px',
     boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
   },
- logo: {
-  width: '80px',
-  height: '80px',
-  display: 'block',
-  margin: '0 auto 16px auto'
-},
+  logoText: {
+    color: '#FF4500',
+    fontSize: '28px',
+    textAlign: 'center',
+    marginBottom: '8px'
+  },
   dot: { color: '#1c1c1c' },
   title: {
     textAlign: 'center',

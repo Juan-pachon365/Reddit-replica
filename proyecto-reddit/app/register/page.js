@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { supabase } from '../../lib/supabaseClient'
+import { supabase } from '@/lib/supabaseClient'
 import { useRouter } from 'next/navigation'
 
 export default function Register() {
@@ -17,10 +17,14 @@ export default function Register() {
     setLoading(true)
     setError(null)
 
-    // 1. Crear usuario en Supabase Auth
     const { data, error: authError } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        data: {
+          username: username
+        }
+      }
     })
 
     if (authError) {
@@ -29,24 +33,13 @@ export default function Register() {
       return
     }
 
-    // 2. Insertar perfil en tabla profiles
-    const { error: profileError } = await supabase
-      .from('profiles')
-      .insert([{ id: data.user.id, username }])
-
-    if (profileError) {
-      setError(profileError.message)
-      setLoading(false)
-      return
-    }
-
-    router.push('/login')
+    router.push('/login?message=Cuenta creada exitosamente. Ahora inicia sesión.')
   }
 
   return (
     <div style={styles.container}>
       <div style={styles.card}>
-        <h1 style={styles.logo}>reddit<span style={styles.dot}>clone</span></h1>
+        <h1 style={styles.logoText}>reddit<span style={styles.dot}>clone</span></h1>
         <h2 style={styles.title}>Crear cuenta</h2>
 
         <form onSubmit={handleRegister} style={styles.form}>
@@ -107,7 +100,7 @@ const styles = {
     maxWidth: '400px',
     boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
   },
-  logo: {
+  logoText: {
     color: '#FF4500',
     fontSize: '28px',
     textAlign: 'center',
